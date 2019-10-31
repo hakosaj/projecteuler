@@ -26,15 +26,7 @@ int main() {
 	auto start_time = std::chrono::high_resolution_clock::now();
 
 
-	for (int i=2;i<11;i++) {
-		for (int r=0;r<10;r++) {
-			double a=(double)1/i;
-			a*=10;
-		}
-		
 
-
-	}
 
 
 

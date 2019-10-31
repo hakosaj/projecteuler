@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <numeric>
 #include <omp.h>
+#include <chrono>
 
 
 using std::cout;
@@ -22,14 +23,13 @@ int getDivisorSum(int n) {
 
 }
 
-bool hasTwoCandidates(vector<int> nums,int siz, int i) {
+bool hasTwoCandidates(std::vector<int> nums,int siz, int i) {
     int l=0;
     int r=siz-1;
 
 
     while (l<r) {
         if (nums[l]+nums[r]==i) {
-            cout<<"Candidates: "<< nums[l] <<" and "<<nums[r]<< " equal to " << i << endl;  
             return 1;
         }
         else if (nums[l]+nums[r]<i) {
@@ -44,29 +44,33 @@ bool hasTwoCandidates(vector<int> nums,int siz, int i) {
 
 int main(int argc, char** argv) {
 
+	auto start_time = std::chrono::high_resolution_clock::now();
 
-    vector<int> abundantNumbers;
-    for (int i=1;i<28123;i++) {
+
+    std::vector<int> abundantNumbers;
+
+    for (int i=1;i<=28120;i++) {
         if (getDivisorSum(i)>i){
             abundantNumbers.push_back(i);
         }
     }
-
-
     int start=0;
     int end=abundantNumbers.size();
 
-    for (int i=24;i<28123;i++) {
 
-        if(hasTwoCandidates(abundantNumbers,end,i)) {
-            //cout<<i<<endl;
+    for (int i=24;i<=28123;i++) {
+
+        if(!hasTwoCandidates(abundantNumbers,end,i)) {
             start+=i;
         }     
 
-
-
     }
+	auto end_time = std::chrono::high_resolution_clock::now();
+	cout <<"Elapsed: "<< std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count() << ".";
+	cout << std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() << " seconds." <<endl;
 
-cout<<start<<endl;
+
+
+std::cout<<start<<std::endl;
 
 }
