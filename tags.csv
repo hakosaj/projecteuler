@@ -1,6 +1,20 @@
 problem;tags
+22;names, letter numbers
+26; recurring decimals
+27;prime, parallel
+28; sequence
+30; bigInt, powers
+32; pandigital, bigInt, find integers from list
+33; decimals, fractions
+34; factorials, parallel, bigint
+35; prime, parallel, permutation
+39; parallel, find integers from list
+38; bigint, pandigital
+40; string
+41; prime, permutation, bigint
+42; file, letters as numbers
+43; parallel, bigint, permutation
+46;prime
+47;prime, factorization, unique factorization
 48;bigint
 50;prime
-27;prime, parallel
-47;prime, factorization, unique factorization
-46;prime

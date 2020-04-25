@@ -19,6 +19,24 @@ using std::vector;
 using std::string;
 using std::set;
 
+bool isprime(int n) 
+{ 
+    if (n <= 1) 
+        return false; 
+    if (n <= 3) 
+        return true; 
+  
+    if (n % 2 == 0 || n % 3 == 0) 
+        return false; 
+  
+    for (int i = 5; i * i <= n; i = i + 6) 
+        if (n % i == 0 || n % (i + 2) == 0) 
+            return false; 
+  
+    return true; 
+} 
+
+
 
 vector<int> scaleToBaseN(vector<int> digits, int N) {
 
@@ -174,36 +192,44 @@ long toInt(vector<int> digits) {
 
 int main() {
 	auto start_time = std::chrono::high_resolution_clock::now();
-	
-	//for each pandigital permutation: can we choose 1-4 from the beginning and 1-4 from the middle
-	// so that the equation holds?
-	vector<int> digits=toDigits(987654321);
 
-	set<int> cns;
+	int gam=1;
+	#pragma omp parallel
+	{
+    int am=0;
+	#pragma omp for
+	for (int i=3;i<1000001;i+=2) {
+		if (isprime(i)) {
+			bool isCircular=true;
+			auto parts = toDigits(i);
+			std::sort(parts.begin(),parts.end());
+				if (!isprime(toInt(parts))) {
+					isCircular=false;
+				}
 
-	while (std::next_permutation(digits.begin(),digits.end())) {
-		for(int a =1;a<5;a++) {
-			for (int b=1;b<5;b++) {
-				if (a+b+1<9) {
-					int an = toInt(vector<int>(digits.begin(),digits.begin()+a));
-					int bn = toInt(vector<int>(digits.begin()+a,digits.begin()+a+b));
-					int cn = toInt(vector<int>(digits.begin()+a+b,digits.end()));
-					if (an*bn==cn) {
-						cns.insert(cn);
-					}
+			while (std::next_permutation(parts.begin(),parts.end())) {
+
+				if (!isprime(toInt(parts))) {
+					isCircular=false;
+
 				}
 			}
+
+			if (isCircular) {
+				am++;
+			}
+
 		}
 	}
-
-	int s=0;
-	for(int g: cns) {
-		cout<<g<<endl;
-		s+=g;
+	#pragma omp critical
+	{
+		gam+=am;
 	}
-	cout<<"sum: "<<s<<endl;
+	}
 
 
+
+cout<<"Total: "<<gam<<endl;
 	
 	auto end_time = std::chrono::high_resolution_clock::now();
 	cout <<"Elapsed: "<< std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count() << ".";

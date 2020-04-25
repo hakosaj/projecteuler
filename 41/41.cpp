@@ -12,6 +12,7 @@
 #include <cstring>
 #include <set>
 #include <unordered_map>
+#include <list>
 
 using std::cout;
 using std::endl;
@@ -19,6 +20,22 @@ using std::vector;
 using std::string;
 using std::set;
 
+bool isPrime(long n) 
+{
+    if(n<=1) return false;
+    if(n<=3) return true;
+
+
+    if (n%2==0 || n%3==0) return false;
+
+    for (long i=5;i*i<=n;i=i+6) {
+        if (n%i==0 || n%(i+2)==0)
+            return false;
+    }
+    return true;
+
+
+}
 
 vector<int> scaleToBaseN(vector<int> digits, int N) {
 
@@ -74,8 +91,8 @@ void printVector(vector<int> digits) {
 
 }
 
-vector<int> toDigits(int n) {
-	int temp=n;
+vector<int> toDigits(long n) {
+	long temp=n;
 	vector<int> digits;
 	int i=1;
 
@@ -88,41 +105,19 @@ vector<int> toDigits(int n) {
 
 	return digits;
 
-}
-set<int> toDigitSet(int n) {
-	int temp=n;
-	set<int> digits;
-	int i=1;
 
-	while (temp>0) {
-		digits.insert(temp%10);
-		temp=temp-temp%10;
-		temp=temp/10;
+}
+
+
+long toInt(vector<int> digits) {
+	long res=0;
+	int i=0;
+	for (const auto &a: digits) {
+		res+=(long)a*pow(10,i);
 		i++;
 	}
 
-	return digits;
-
-}
-vector<int> addVectors(vector<int> a, vector<int> b) {
-	vector<int> add;
-	if (a.size()>b.size()) {
-		add=a;
-		for (int i=0;i<b.size();i++) {
-			add[i]+=b[i];
-			add=scaleToBaseN(add,10);
-		}
-
-	}else {
-		add=b;
-		for (int i=0;i<a.size();i++) {
-			add[i]+=a[i];
-			add=scaleToBaseN(add,10);
-		}
-
-	}
-
-	return add;
+	return res;
 }
 
 vector<int> multiply(vector<int> digits, int n){
@@ -136,73 +131,24 @@ vector<int> multiply(vector<int> digits, int n){
 
 }
 
-vector<int> multiplyVectors(vector<int> digits1, vector<int> digits2) {
-
-	int tens=0;
-	vector<int> multiplied={0};
-	for (const auto &a: digits1) {
-			multiplied=addVectors(multiplied,multiply(digits2,a*pow(10,tens)));
-			multiplied=scaleToBaseN(multiplied,10);
-
-			tens++;
-	}
-
-	return multiplied;
-
-}
-
-vector<int> power(vector<int> digits, int p, int lastDigits) {
-	vector<int> base = digits;
-	for (int i=1;i<p;i++) {
-		digits=trimToLastDigits(multiplyVectors(digits,base),lastDigits);
-	}
-	return digits;
-}
-
-long toInt(vector<int> digits) {
-	long res=0;
-	int i=0;
-	for (const auto &a: digits) {
-		res+=(long)a*pow(10,i);
-		i++;
-	}
-
-	return res;
-}
-
-
-
 int main() {
-	auto start_time = std::chrono::high_resolution_clock::now();
 	
-	//for each pandigital permutation: can we choose 1-4 from the beginning and 1-4 from the middle
-	// so that the equation holds?
-	vector<int> digits=toDigits(987654321);
+	auto start_time = std::chrono::high_resolution_clock::now();
 
-	set<int> cns;
 
-	while (std::next_permutation(digits.begin(),digits.end())) {
-		for(int a =1;a<5;a++) {
-			for (int b=1;b<5;b++) {
-				if (a+b+1<9) {
-					int an = toInt(vector<int>(digits.begin(),digits.begin()+a));
-					int bn = toInt(vector<int>(digits.begin()+a,digits.begin()+a+b));
-					int cn = toInt(vector<int>(digits.begin()+a+b,digits.end()));
-					if (an*bn==cn) {
-						cns.insert(cn);
-					}
-				}
+    long max=0;
+	vector<int> nine = toDigits(7654321);
+	while (std::next_permutation(nine.begin(),nine.end())) {
+		long ta = toInt(nine);
+		if(isPrime(ta)){
+			if (ta>max) {
+				max=ta;
 			}
+			
 		}
 	}
-
-	int s=0;
-	for(int g: cns) {
-		cout<<g<<endl;
-		s+=g;
-	}
-	cout<<"sum: "<<s<<endl;
-
+	cout<<max<<endl;
+	
 
 	
 	auto end_time = std::chrono::high_resolution_clock::now();

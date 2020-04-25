@@ -12,6 +12,7 @@
 #include <cstring>
 #include <set>
 #include <unordered_map>
+#include <list>
 
 using std::cout;
 using std::endl;
@@ -74,8 +75,8 @@ void printVector(vector<int> digits) {
 
 }
 
-vector<int> toDigits(int n) {
-	int temp=n;
+vector<int> toDigits(long n) {
+	long temp=n;
 	vector<int> digits;
 	int i=1;
 
@@ -88,41 +89,19 @@ vector<int> toDigits(int n) {
 
 	return digits;
 
-}
-set<int> toDigitSet(int n) {
-	int temp=n;
-	set<int> digits;
-	int i=1;
 
-	while (temp>0) {
-		digits.insert(temp%10);
-		temp=temp-temp%10;
-		temp=temp/10;
+}
+
+
+long toInt(vector<int> digits) {
+	long res=0;
+	int i=0;
+	for (const auto &a: digits) {
+		res+=(long)a*pow(10,i);
 		i++;
 	}
 
-	return digits;
-
-}
-vector<int> addVectors(vector<int> a, vector<int> b) {
-	vector<int> add;
-	if (a.size()>b.size()) {
-		add=a;
-		for (int i=0;i<b.size();i++) {
-			add[i]+=b[i];
-			add=scaleToBaseN(add,10);
-		}
-
-	}else {
-		add=b;
-		for (int i=0;i<a.size();i++) {
-			add[i]+=a[i];
-			add=scaleToBaseN(add,10);
-		}
-
-	}
-
-	return add;
+	return res;
 }
 
 vector<int> multiply(vector<int> digits, int n){
@@ -136,73 +115,60 @@ vector<int> multiply(vector<int> digits, int n){
 
 }
 
-vector<int> multiplyVectors(vector<int> digits1, vector<int> digits2) {
-
-	int tens=0;
-	vector<int> multiplied={0};
-	for (const auto &a: digits1) {
-			multiplied=addVectors(multiplied,multiply(digits2,a*pow(10,tens)));
-			multiplied=scaleToBaseN(multiplied,10);
-
-			tens++;
-	}
-
-	return multiplied;
-
-}
-
-vector<int> power(vector<int> digits, int p, int lastDigits) {
-	vector<int> base = digits;
-	for (int i=1;i<p;i++) {
-		digits=trimToLastDigits(multiplyVectors(digits,base),lastDigits);
-	}
-	return digits;
-}
-
-long toInt(vector<int> digits) {
-	long res=0;
-	int i=0;
-	for (const auto &a: digits) {
-		res+=(long)a*pow(10,i);
-		i++;
-	}
-
-	return res;
-}
-
-
-
 int main() {
-	auto start_time = std::chrono::high_resolution_clock::now();
 	
-	//for each pandigital permutation: can we choose 1-4 from the beginning and 1-4 from the middle
-	// so that the equation holds?
-	vector<int> digits=toDigits(987654321);
+	auto start_time = std::chrono::high_resolution_clock::now();
 
-	set<int> cns;
 
-	while (std::next_permutation(digits.begin(),digits.end())) {
-		for(int a =1;a<5;a++) {
-			for (int b=1;b<5;b++) {
-				if (a+b+1<9) {
-					int an = toInt(vector<int>(digits.begin(),digits.begin()+a));
-					int bn = toInt(vector<int>(digits.begin()+a,digits.begin()+a+b));
-					int cn = toInt(vector<int>(digits.begin()+a+b,digits.end()));
-					if (an*bn==cn) {
-						cns.insert(cn);
-					}
+	std::list<int> primes={2,3,5,7,11,13,17};
+    
+	vector<int> lex2 = toDigits(9876543210);
+	
+	long long sums=0;
+	#pragma omp parallel 
+	{
+	long ownsum=0;
+	#pragma omp for schedule(static,1)
+	for (int i=0;i<10;i++) {
+		vector<int> lex=lex2;
+		std::swap(lex[0],lex[i]);
+		std::sort(lex.begin()+1,lex.end());
+		
+		
+		while (std::next_permutation(lex.begin()+1,lex.end())) {
+
+			int p=0;
+			int divcount=0;
+			auto it=primes.begin();
+			for(int i=1;i<8;i++) {
+				
+			
+				vector<int> div(lex.end()-3-i,lex.end()-i);
+				if (toInt(div)%*it==0) {
+					divcount++;
+
 				}
+				p++;
+				it++;
+				
+
 			}
-		}
+			
+			if(divcount==7) {
+				long fg=toInt(lex);
+				cout<<"Here: "<<fg<<endl;
+				ownsum+=fg;
+			}
+
+			}
+	}
+	#pragma omp critical
+	{
+		sums+=ownsum;
+	}
 	}
 
-	int s=0;
-	for(int g: cns) {
-		cout<<g<<endl;
-		s+=g;
-	}
-	cout<<"sum: "<<s<<endl;
-
+cout<<sums<<endl;
 
 	
 	auto end_time = std::chrono::high_resolution_clock::now();

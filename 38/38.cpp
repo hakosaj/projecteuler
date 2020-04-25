@@ -19,7 +19,6 @@ using std::vector;
 using std::string;
 using std::set;
 
-
 vector<int> scaleToBaseN(vector<int> digits, int N) {
 
         for( int a=0;a<digits.size();a++) {
@@ -170,38 +169,32 @@ long toInt(vector<int> digits) {
 	return res;
 }
 
-
-
 int main() {
 	auto start_time = std::chrono::high_resolution_clock::now();
-	
-	//for each pandigital permutation: can we choose 1-4 from the beginning and 1-4 from the middle
-	// so that the equation holds?
-	vector<int> digits=toDigits(987654321);
+	//alaraja; n vähintään 2
+	//eli max. viisi numeroa orkkiksessa
+	#pragma omp parallel for
+	for (int n=2;n<15;n++) {
+		for (int p=1;p<100000;p++) {
 
-	set<int> cns;
+			vector<int> prods;
 
-	while (std::next_permutation(digits.begin(),digits.end())) {
-		for(int a =1;a<5;a++) {
-			for (int b=1;b<5;b++) {
-				if (a+b+1<9) {
-					int an = toInt(vector<int>(digits.begin(),digits.begin()+a));
-					int bn = toInt(vector<int>(digits.begin()+a,digits.begin()+a+b));
-					int cn = toInt(vector<int>(digits.begin()+a+b,digits.end()));
-					if (an*bn==cn) {
-						cns.insert(cn);
-					}
-				}
+			for (int nc=n;nc>0;nc--) {
+				int f=nc*p;
+				vector<int> fv=toDigits(f);
+				prods.insert(prods.end(),fv.begin(),fv.end());
 			}
+			set<int> s(prods.begin(),prods.end());
+			if (s.size()== 9 && s.count(0)==0 && prods.size()==9) {
+				printVector(prods);
+			}
+
+
 		}
 	}
+    
 
-	int s=0;
-	for(int g: cns) {
-		cout<<g<<endl;
-		s+=g;
-	}
-	cout<<"sum: "<<s<<endl;
+
 
 
 	

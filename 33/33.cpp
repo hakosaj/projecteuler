@@ -20,6 +20,7 @@ using std::string;
 using std::set;
 
 
+
 vector<int> scaleToBaseN(vector<int> digits, int N) {
 
         for( int a=0;a<digits.size();a++) {
@@ -172,36 +173,28 @@ long toInt(vector<int> digits) {
 
 
 
+
+
 int main() {
 	auto start_time = std::chrono::high_resolution_clock::now();
-	
-	//for each pandigital permutation: can we choose 1-4 from the beginning and 1-4 from the middle
-	// so that the equation holds?
-	vector<int> digits=toDigits(987654321);
 
-	set<int> cns;
+	//luodaan kaikki muotoa abbc-olevat 
+	//löydettävä ne, joilla ab/bc==a/c
+	vector<vector<int>> all;
+	for (int d=1;d<10;d++) {
+		for (int a=1;a<10;a++) {
+			for (int b=1;b<10;b++) {
+				vector<int> digs ={a,d,d,b};
+				double o = (double)10*a+d;
+				double n = (double)10*d+b;
 
-	while (std::next_permutation(digits.begin(),digits.end())) {
-		for(int a =1;a<5;a++) {
-			for (int b=1;b<5;b++) {
-				if (a+b+1<9) {
-					int an = toInt(vector<int>(digits.begin(),digits.begin()+a));
-					int bn = toInt(vector<int>(digits.begin()+a,digits.begin()+a+b));
-					int cn = toInt(vector<int>(digits.begin()+a+b,digits.end()));
-					if (an*bn==cn) {
-						cns.insert(cn);
-					}
+				if (abs(o/n ==((double)a/(double)b)) && o/n<1.0) {
+					cout<<o<<","<<n<<","<<(double)a<<","<<(double)b<<endl;
+				}
+
 				}
 			}
 		}
-	}
-
-	int s=0;
-	for(int g: cns) {
-		cout<<g<<endl;
-		s+=g;
-	}
-	cout<<"sum: "<<s<<endl;
 
 
 	

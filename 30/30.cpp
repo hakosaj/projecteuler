@@ -89,21 +89,6 @@ vector<int> toDigits(int n) {
 	return digits;
 
 }
-set<int> toDigitSet(int n) {
-	int temp=n;
-	set<int> digits;
-	int i=1;
-
-	while (temp>0) {
-		digits.insert(temp%10);
-		temp=temp-temp%10;
-		temp=temp/10;
-		i++;
-	}
-
-	return digits;
-
-}
 vector<int> addVectors(vector<int> a, vector<int> b) {
 	vector<int> add;
 	if (a.size()>b.size()) {
@@ -171,37 +156,25 @@ long toInt(vector<int> digits) {
 }
 
 
-
 int main() {
 	auto start_time = std::chrono::high_resolution_clock::now();
-	
-	//for each pandigital permutation: can we choose 1-4 from the beginning and 1-4 from the middle
-	// so that the equation holds?
-	vector<int> digits=toDigits(987654321);
+	long upperlimit= 3550000;
+	int sumz=0;
 
-	set<int> cns;
-
-	while (std::next_permutation(digits.begin(),digits.end())) {
-		for(int a =1;a<5;a++) {
-			for (int b=1;b<5;b++) {
-				if (a+b+1<9) {
-					int an = toInt(vector<int>(digits.begin(),digits.begin()+a));
-					int bn = toInt(vector<int>(digits.begin()+a,digits.begin()+a+b));
-					int cn = toInt(vector<int>(digits.begin()+a+b,digits.end()));
-					if (an*bn==cn) {
-						cns.insert(cn);
-					}
-				}
-			}
+	for (long i=upperlimit;i>1;i--) {
+		auto digits =toDigits(i);
+		int sum=0;
+		for (int d: digits) {
+			sum+=pow(d,5);
+		}
+		if (sum==i) {
+			printVector(digits);
+			sumz+=i;
 		}
 	}
 
-	int s=0;
-	for(int g: cns) {
-		cout<<g<<endl;
-		s+=g;
-	}
-	cout<<"sum: "<<s<<endl;
+cout<<"\nTotal sum is: "<<sumz<<endl;
+
 
 
 	
