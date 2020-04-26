@@ -31,21 +31,26 @@ void printVector(vector<int> a) {
 int main() {
 	auto start_time = std::chrono::high_resolution_clock::now();
     
-	vector<char> numberString;
-	numberString.push_back(0);
-	for (int i=1;i<1100000;i++) {
-		for (const auto &a: std::to_string(i)) {
-			numberString.push_back(a);
+
+
+
+	long long eulercoin = 1504170715041707;
+	long long modulo = 4503599627370517;
+	long long smallest=eulercoin;
+	long long sum=0;
+
+	for (long i=1;i<10000;i++) {
+		long long current=eulercoin*i % modulo;
+		if (current<smallest) {
+			smallest=current;
+			cout<<current<<endl;
+			sum+=current;
 		}
 	}
-	cout<<numberString[1]<<endl;
-	cout<<numberString[10]<<endl;
-	cout<<numberString[100]<<endl;
-	cout<<numberString[1000]<<endl;
-	cout<<numberString[10000]<<endl;
-	cout<<numberString[100000]<<endl;
-	cout<<numberString[1000000]<<endl;
-	cout<<"\n";
+
+	cout<<sum<<endl;
+
+
 	
 	auto end_time = std::chrono::high_resolution_clock::now();
 	cout <<"Elapsed: "<< std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count() << ".";
