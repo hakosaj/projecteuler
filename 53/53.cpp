@@ -9,31 +9,18 @@
 #include <sstream>
 #include <iterator>
 #include <chrono>
+#include <cmath>
 #include <cstring>
+#include <set>
 #include <unordered_map>
 
 using std::cout;
 using std::endl;
 using std::vector;
 using std::string;
+using std::set;
 
 
-bool isprime(int n) 
-{ 
-    if (n <= 1) 
-        return false; 
-    if (n <= 3) 
-        return true; 
-  
-    if (n % 2 == 0 || n % 3 == 0) 
-        return false; 
-  
-    for (int i = 5; i * i <= n; i = i + 6) 
-        if (n % i == 0 || n % (i + 2) == 0) 
-            return false; 
-  
-    return true; 
-}
 
 vector<int> scaleToBaseN(vector<int> digits, int N) {
 
@@ -89,8 +76,8 @@ void printVector(vector<int> digits) {
 
 }
 
-vector<int> toDigits(int n) {
-	int temp=n;
+vector<int> toDigits(long n) {
+	long temp=n;
 	vector<int> digits;
 	int i=1;
 
@@ -103,26 +90,19 @@ vector<int> toDigits(int n) {
 
 	return digits;
 
+
 }
-vector<int> addVectors(vector<int> a, vector<int> b) {
-	vector<int> add;
-	if (a.size()>b.size()) {
-		add=a;
-		for (int i=0;i<b.size();i++) {
-			add[i]+=b[i];
-			add=scaleToBaseN(add,10);
-		}
 
-	}else {
-		add=b;
-		for (int i=0;i<a.size();i++) {
-			add[i]+=a[i];
-			add=scaleToBaseN(add,10);
-		}
 
+long toInt(vector<int> digits) {
+	long res=0;
+	int i=0;
+	for (const auto &a: digits) {
+		res+=(long)a*pow(10,i);
+		i++;
 	}
 
-	return add;
+	return res;
 }
 
 vector<int> multiply(vector<int> digits, int n){
@@ -136,51 +116,66 @@ vector<int> multiply(vector<int> digits, int n){
 
 }
 
-vector<int> multiplyVectors(vector<int> digits1, vector<int> digits2) {
+vector<int> division(vector<int> digits, int n){
 
-	int tens=0;
-	vector<int> multiplied={0};
-	for (const auto &a: digits1) {
-			multiplied=addVectors(multiplied,multiply(digits2,a*pow(10,tens)));
-			multiplied=scaleToBaseN(multiplied,10);
+    for (int i=0;i<digits.size();i++) {
 
-			tens++;
-	}
+        digits[i]/=n;
+    }
 
-	return multiplied;
+    return scaleToBaseN(digits,10);
 
 }
 
-vector<int> powerWithTrim(vector<int> digits, int p, int lastDigits) {
-	vector<int> base = digits;
-	for (int i=1;i<p;i++) {
-		digits=trimToLastDigits(multiplyVectors(digits,base),lastDigits);
+int factorial(int n) {
+	long res=1;
+	if (n==0 || n==1) {
+		return 1;
 	}
+
+	for (int i=n;i>1;i--) {
+		res*=i;
+
+	}
+	return res;
+}
+
+
+vector<int> ncr(int n, int r) {
+
+	vector<int> digits={1};
 	return digits;
 }
 
-vector<int> power(vector<int> digits, int p) {
-	vector<int> base = digits;
-	for (int i=1;i<p;i++) {
-		digits=multiplyVectors(digits,base);
-		digits=scaleToBaseN(digits,10);
-		printVector(digits);
-	}
-	return digits;
+double factorialGamma(int n, int k) {
+	double a =std::lgamma(n+1);	
+	double b =std::lgamma(k+1);	
+	double c = std::lgamma(n-k+1);
+	return std::exp(a-b-c);	
 }
 
-long digitCount(vector<int> base) {
-	return std::accumulate(base.begin(),base.end(),0);
-}
+int main() {
 
-int main() {	
+	
 	auto start_time = std::chrono::high_resolution_clock::now();
+	
+	int count=0;
 
-	cout<<" Biggest is "<<gmdigitCount<<" which is "<<gma<<"^"<<gmb<<endl;
+	for (int n=1;n<101;n++) {
+		for (int k=1;k<n+1;k++) {
+			if (factorialGamma(n,k)>1000000) {
+				count++;
+			}
+		}
+	}
+	cout<<"Totals: "<<count<<endl;
 
-    
+
+
+
+	
 	auto end_time = std::chrono::high_resolution_clock::now();
-	cout <<"\nElapsed: "<< std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count() << ".";
+	cout <<"Elapsed: "<< std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count() << ".";
 	cout << std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() << " seconds." <<endl;
 
 

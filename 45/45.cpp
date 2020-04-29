@@ -10,68 +10,63 @@
 #include <iterator>
 #include <chrono>
 #include <cstring>
+#include <set>
 #include <unordered_map>
 
 using std::cout;
 using std::endl;
 using std::vector;
 using std::string;
+using std::set;
 
-bool isTriangle(int i) {
-	float tri=(-1+sqrt(1+8*i))/2;
-	return (ceil(tri)==floor(tri));
-}
-bool isPentagonal(int i) {
-	float pen=(1+sqrt(1+24*i))/6;
-	return (ceil(pen)==floor(pen));
-}
-bool isHexagonal(int i) {
-	float hex=(1+sqrt(1+8*i))/4;
-	return (ceil(hex)==floor(hex));
+
+
+void printVector(vector<int> a) {
+	for (const auto &n: a) {
+		cout<<n<<",";
+	}
+	cout<<"\n";
 }
 
-int nextTriangle(int t) {
-	int n=(-1+sqrt(1+8*t))/2;
-	return (n+1)*(n+2)/2;
+
+long hexagonal(long n) {
+	return n*(2*n-1);
+}
+
+
+
+bool isPentagonal(long long x) {
+	unsigned long long r = (1+sqrt(1+(long long)24*x)/6);
+
+	auto pent = r*(3*r-1)/2;
+	return pent==x;
+
 
 }
+
 
 int main() {
+
 	auto start_time = std::chrono::high_resolution_clock::now();
 
+	for (int i=1;i<100000;i++) {
+		if (isPentagonal(hexagonal(i))) {
+			cout<<hexagonal(i)<<endl;
 
-	bool found=false;
-	int t=40756;
+		}
 
-	while (!found) {
-			if (isPentagonal(t)) {
-				if(isHexagonal(t)) {
-					cout<<t<<endl;
-					found=true;
-				}
-			}
-			t++;
 	}
+    
+
+
+
+
 	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	auto end_time = std::chrono::high_resolution_clock::now();
 	cout <<"Elapsed: "<< std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count() << ".";
 	cout << std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() << " seconds." <<endl;
+
+
+
 
 }

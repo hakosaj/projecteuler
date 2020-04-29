@@ -176,6 +176,42 @@ long digitCount(vector<int> base) {
 int main() {	
 	auto start_time = std::chrono::high_resolution_clock::now();
 
+	int gmdigitCount=0;
+	int gma=0;
+	int gmb=0;
+	#pragma omp parallel
+	{
+	int mdigitCount=0;
+	int ma=0;
+	int mb=0;
+	#pragma omp for schedule(static,1)
+	for (int a=1;a<500;a++) {
+		for (int b=1;b<100;b++) {
+			vector<int> base = toDigits(a);
+
+			for (int i=0;i<b;i++) {
+				base=multiply(base,a);
+				int digs=digitCount(base);
+				if (digs>mdigitCount) {
+					mdigitCount=digs;
+					ma=a;
+					mb=b;
+					
+				}
+
+			}
+		}
+	}
+	#pragma omp critical
+	{
+		if (mdigitCount>gmdigitCount) {
+			gmdigitCount=mdigitCount;
+			gma=ma;
+			gmb=mb;
+		}
+	}
+	}
+
 	cout<<" Biggest is "<<gmdigitCount<<" which is "<<gma<<"^"<<gmb<<endl;
 
     

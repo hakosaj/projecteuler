@@ -10,29 +10,31 @@
 #include <iterator>
 #include <chrono>
 #include <cstring>
+#include <set>
 #include <unordered_map>
 
 using std::cout;
 using std::endl;
 using std::vector;
 using std::string;
+using std::set;
 
 
-bool isprime(int n) 
-{ 
-    if (n <= 1) 
-        return false; 
-    if (n <= 3) 
-        return true; 
-  
-    if (n % 2 == 0 || n % 3 == 0) 
-        return false; 
-  
-    for (int i = 5; i * i <= n; i = i + 6) 
-        if (n % i == 0 || n % (i + 2) == 0) 
-            return false; 
-  
-    return true; 
+bool isPrime(long n) 
+{
+    if(n<=1) return false;
+    if(n<=3) return true;
+
+
+    if (n%2==0 || n%3==0) return false;
+
+    for (long i=5;i*i<=n;i=i+6) {
+        if (n%i==0 || n%(i+2)==0)
+            return false;
+    }
+    return true;
+
+
 }
 
 vector<int> scaleToBaseN(vector<int> digits, int N) {
@@ -89,8 +91,8 @@ void printVector(vector<int> digits) {
 
 }
 
-vector<int> toDigits(int n) {
-	int temp=n;
+vector<int> toDigits(long n) {
+	long temp=n;
 	vector<int> digits;
 	int i=1;
 
@@ -103,26 +105,19 @@ vector<int> toDigits(int n) {
 
 	return digits;
 
+
 }
-vector<int> addVectors(vector<int> a, vector<int> b) {
-	vector<int> add;
-	if (a.size()>b.size()) {
-		add=a;
-		for (int i=0;i<b.size();i++) {
-			add[i]+=b[i];
-			add=scaleToBaseN(add,10);
-		}
 
-	}else {
-		add=b;
-		for (int i=0;i<a.size();i++) {
-			add[i]+=a[i];
-			add=scaleToBaseN(add,10);
-		}
 
+long toInt(vector<int> digits) {
+	long res=0;
+	int i=0;
+	for (const auto &a: digits) {
+		res+=(long)a*pow(10,i);
+		i++;
 	}
 
-	return add;
+	return res;
 }
 
 vector<int> multiply(vector<int> digits, int n){
@@ -136,51 +131,51 @@ vector<int> multiply(vector<int> digits, int n){
 
 }
 
-vector<int> multiplyVectors(vector<int> digits1, vector<int> digits2) {
 
-	int tens=0;
-	vector<int> multiplied={0};
-	for (const auto &a: digits1) {
-			multiplied=addVectors(multiplied,multiply(digits2,a*pow(10,tens)));
-			multiplied=scaleToBaseN(multiplied,10);
+bool isPalindromic(vector<int> digits) {
+	vector<int> reversed=digits;
+	std::reverse(reversed.begin(),reversed.end());
 
-			tens++;
+	if (digits==reversed){
+		return true;
 	}
-
-	return multiplied;
-
+	return false;
 }
 
-vector<int> powerWithTrim(vector<int> digits, int p, int lastDigits) {
-	vector<int> base = digits;
-	for (int i=1;i<p;i++) {
-		digits=trimToLastDigits(multiplyVectors(digits,base),lastDigits);
-	}
-	return digits;
+vector<int> addVectors(vector<int> a, vector<int> b) {
+	auto size = std::max(a.size(), b.size()); 
+	std::vector<int> c(size); 
+
+	std::transform(
+    	begin(a), begin(a)+size, begin(b),
+    	begin(c), std::plus<int>()
+	);
+	
+	return scaleToBaseN(c,10);
 }
 
-vector<int> power(vector<int> digits, int p) {
-	vector<int> base = digits;
-	for (int i=1;i<p;i++) {
-		digits=multiplyVectors(digits,base);
-		digits=scaleToBaseN(digits,10);
-		printVector(digits);
-	}
-	return digits;
-}
 
-long digitCount(vector<int> base) {
-	return std::accumulate(base.begin(),base.end(),0);
-}
-
-int main() {	
+int main() {
 	auto start_time = std::chrono::high_resolution_clock::now();
 
-	cout<<" Biggest is "<<gmdigitCount<<" which is "<<gma<<"^"<<gmb<<endl;
 
-    
+	vector<int> fn_1=toDigits(1);
+	vector<int> fn_2=toDigits(1);
+	vector<int> current;
+
+	for (int i=3;i<15;i++) {
+		current= addVectors(fn_1,fn_2);
+		fn_2=scaleToBaseN(fn_1,10);
+		fn_1=scaleToBaseN(current,10);
+		printVector(current);
+	}
+
+
+
+
+
 	auto end_time = std::chrono::high_resolution_clock::now();
-	cout <<"\nElapsed: "<< std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count() << ".";
+	cout <<"Elapsed: "<< std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count() << ".";
 	cout << std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() << " seconds." <<endl;
 
 

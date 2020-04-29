@@ -15,9 +15,14 @@ problem;tags
 41; prime, permutation, bigint
 42; file, letters as numbers
 43; parallel, bigint, permutation
+45; triangular, float/integer
 46;prime
 47;prime, factorization, unique factorization
 48;bigint
 50;prime
 52; bigint
+53; factorials, binomials
+55; bigint, palindromic
+56; bigint, powers, permutation
+85; geometry, binomials
 102;cartesian, barycentric, file
