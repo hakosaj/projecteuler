@@ -1,1 +1,0 @@
-grep -r --include \*.txt  "$1"

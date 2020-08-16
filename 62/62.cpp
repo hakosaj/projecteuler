@@ -11,12 +11,31 @@
 #include <chrono>
 #include <cstring>
 #include <unordered_map>
+#include <map>
 
+using std::map;
 using std::cout;
 using std::endl;
 using std::vector;
 using std::string;
 
+
+bool isprime(int n) 
+{ 
+    if (n <= 1) 
+        return false; 
+    if (n <= 3) 
+        return true; 
+  
+    if (n % 2 == 0 || n % 3 == 0) 
+        return false; 
+  
+    for (int i = 5; i * i <= n; i = i + 6) 
+        if (n % i == 0 || n % (i + 2) == 0) 
+            return false; 
+  
+    return true; 
+}
 
 vector<int> scaleToBaseN(vector<int> digits, int N) {
 
@@ -134,7 +153,7 @@ vector<int> multiplyVectors(vector<int> digits1, vector<int> digits2) {
 
 }
 
-vector<int> power(vector<int> digits, int p, int lastDigits) {
+vector<int> powerWithTrim(vector<int> digits, int p, int lastDigits) {
 	vector<int> base = digits;
 	for (int i=1;i<p;i++) {
 		digits=trimToLastDigits(multiplyVectors(digits,base),lastDigits);
@@ -142,29 +161,43 @@ vector<int> power(vector<int> digits, int p, int lastDigits) {
 	return digits;
 }
 
+vector<int> power(vector<int> digits, int p) {
+	vector<int> base = digits;
+	for (int i=1;i<p;i++) {
+		digits=multiplyVectors(digits,base);
+		digits=scaleToBaseN(digits,10);
+	}
+	return digits;
+}
+
+long digitCount(vector<int> base) {
+	return std::accumulate(base.begin(),base.end(),0);
+}
+
+long  toInt(vector<int> digits) {
+	long res=0;
+	int i=0;
+	for (const auto &a: digits) {
+		res+=(long)a*pow(10,i);
+		i++;
+	}
+
+	return res;
+}
+
 int main() {	
 	auto start_time = std::chrono::high_resolution_clock::now();
 
+	map<int, long long int> cubes;
 
-	vector<int> result={0};
-	for (int i=1;i<501;i++) {
-		cout<<i<<endl;
-		vector<int> midres={i};
-
-		for (int a=i;a>1;a--) {
-			midres=multiply(midres,i);
-
+	for (int i=100;i<102;i++) {
+		cubes.insert({i,i*i*i});
+		auto current = toDigits(i*i*i);
+		std::sort(current.begin(),current.end());
+		while (std::next_permutation(current.begin(),current.end())) {
+			cout<<toInt(current)<<endl;
 		}
-		result=addVectors(result,midres);
 	}
-	printVector(result);
-
-
-
-
-
-
-
     
 	auto end_time = std::chrono::high_resolution_clock::now();
 	cout <<"\nElapsed: "<< std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count() << ".";

@@ -147,8 +147,7 @@ int main() {
 
 
 	vector<int> result={0};
-	for (int i=1;i<501;i++) {
-		cout<<i<<endl;
+	for (int i=1;i<1001;i++) {
 		vector<int> midres={i};
 
 		for (int a=i;a>1;a--) {
