@@ -70,7 +70,6 @@ vector<vector<string>> readFile() {
 
 //Map of cards to values
 std::map<char,int> cardValue = {
-	{'1',1},
 	{'2',2},
 	{'3',3},
 	{'4',4},
@@ -86,16 +85,122 @@ std::map<char,int> cardValue = {
 	{'A',14},
 };
 
+int checkMultiplies(vector<int> values) {
+	//Check multiples
+	std::map<int,int> counts;
 
-int calculateHandValue(vector<string> hand) {
-	vector<std::pair<int, char>> cards;
-	for (auto card: hand) {
-		cout<<"Suit is "<<char(card[1])<<" and value is "<<cardValue[card[0]]<<endl;
-		cards.push_back(std::make_pair(cardValue[card[0]],char(card[1])));
+	for (auto val: values) {
+		if (counts.count(val)==0) {
+			counts.insert({val,1});
+		}
+		else {
+			counts[val]++;
+		}
+
+	}
+	vector<int> cts;
+	for (auto c: counts) {
+		cts.push_back(c.second);
+	}
+
+	//ascending
+	std::sort(cts.begin(),cts.end(),std::greater<int>());
+
+	if (cts[0]==4) {
+		cout<<"quads"<<endl;
+		return 7;
+	}
+
+	else if (cts[0]==3 && cts[1]==2) {
+		cout<<"full house"<<endl;
+		return 6;
+	}
+
+	else if (cts[0]==3 && cts[1]==1 && cts[2]==1) {
+		cout<<"threeoffakind"<<endl;
+		return 3;
+	}
+
+	else if (cts[0]==2 && cts[1]==2 && cts[2]==1) {
+		cout<<"two pairs"<<endl;
+		return 2;
+	}
+
+	else if (cts.size()==4) {
+		cout<<"pair"<<endl;
+		return 1;
+	}
+	else {
+		cout<<"no multiplies"<<endl;
+		return 0;
+	}
+}
+
+bool isStraight(vector<int> values) {
+	std::sort(values.begin(),values.end());
+	for(auto a:values) {
+		//cout<<a<<endl;
+	}
+	int diff=abs(values[0]-values[4]);
+	if (diff==4){
+		return true;
+	}else {
+	return false;
 	}
 
 
-	return 0;
+
+}
+
+int highestCard(vector<string> hand) {
+	
+	vector<int> values;
+	for (auto card: hand) {
+		values.push_back(cardValue[card[0]]);
+	}
+	std::sort(values.begin(),values.end());
+	cout<<"Highest card: "<<values[4]<<endl;
+	return values[4];
+
+}
+
+int calculateHandValue(vector<string> hand) {
+	vector<std::pair<int, char>> cards;
+	vector<int> values;
+	vector<int> suits;
+	std::set<int> suitSet;
+	std::copy(suitSet.begin(),suitSet.end(),std::back_inserter(suits));
+	int handValue=0;
+
+	for (auto card: hand) {
+		cards.push_back(std::make_pair(cardValue[card[0]],char(card[1])));
+		values.push_back(cardValue[card[0]]);
+		suits.push_back(char(card[1]));
+	}
+	handValue+=checkMultiplies(values);
+	bool isFlush=false;
+	if (suitSet.size()==1) {
+		isFlush=true;
+	}
+	bool straight=false;
+	straight= isStraight(values);
+
+	if(isFlush&&isStraight) {
+		cout<<"Straight flush"<<endl;
+		handValue+=8;
+	}if(isFlush) {
+		cout<<"Flush"<<endl;
+		handValue+=5;
+	}if(straight) {
+		cout<<"Straight"<<endl;
+		handValue+=4;
+	}
+
+	if(handValue==0) {
+		cout<<"no hand, highest card"<<endl;
+	}
+	//cout<<"Hand value: "<<handValue<<endl;
+	return handValue;
 }
 
 
@@ -110,8 +215,13 @@ int main() {
 		//cout<<"\n";
 
 	}
+	cout<<"Hand 1: "<<endl;
+	int handv1=calculateHandValue(hands[0]);
+	int handm1=highestCard(hands[0]);
+	cout<<"\nHand 2: "<<endl;
+	int handv2=calculateHandValue(hands[1]);
+	int handm2=highestCard(hands[1]);
 
-	calculateHandValue(hands[0]);
 
 	
 

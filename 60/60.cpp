@@ -11,15 +11,48 @@
 #include <chrono>
 #include <cstring>
 #include <unordered_map>
-<<<<<<< HEAD
-#include <map>
+#include <iomanip>  
 
-using std::map;
 using std::cout;
 using std::endl;
 using std::vector;
 using std::string;
 
+
+vector<long> readFile() {
+
+    std::ifstream myfile;
+    myfile.open("base_exp.txt");
+
+    if(!myfile) {
+        std::cerr<<"Cant open!";
+        std::exit(1);
+    }
+
+	string delimiter=",";
+	vector<long> coords;
+    size_t pos=0;
+    string token;
+
+	    while (getline(myfile,token))
+   		{
+			   std::stringstream ss(token);
+			       while (ss.good()) { 
+						string substr; 
+						char* endd;
+						getline(ss, substr, ','); 
+						coords.push_back(std::strtoull(substr.c_str(),&endd,10));
+						//cout<<substr<<endl; 
+    					}	 
+				
+    	} 
+
+    
+myfile.close();
+return coords;
+
+	
+}
 
 bool isprime(int n) 
 { 
@@ -167,10 +200,7 @@ vector<int> power(vector<int> digits, int p) {
 	for (int i=1;i<p;i++) {
 		digits=multiplyVectors(digits,base);
 		digits=scaleToBaseN(digits,10);
-<<<<<<< HEAD
-=======
 		printVector(digits);
->>>>>>> e579c5d971f151ffaae8eabc27f187c22cd76642
 	}
 	return digits;
 }
@@ -179,40 +209,37 @@ long digitCount(vector<int> base) {
 	return std::accumulate(base.begin(),base.end(),0);
 }
 
-<<<<<<< HEAD
-long  toInt(vector<int> digits) {
-	long res=0;
-	int i=0;
-	for (const auto &a: digits) {
-		res+=(long)a*pow(10,i);
-		i++;
-	}
-
-	return res;
-}
-
 int main() {	
 	auto start_time = std::chrono::high_resolution_clock::now();
 
-	map<int, long long int> cubes;
 
-	for (int i=100;i<102;i++) {
-		cubes.insert({i,i*i*i});
-		auto current = toDigits(i*i*i);
-		std::sort(current.begin(),current.end());
-		while (std::next_permutation(current.begin(),current.end())) {
-			cout<<toInt(current)<<endl;
+
+
+
+	vector<long> numbs=readFile();
+
+	double maxed=0;
+	int lineNumber=1;
+	int foundLine=0;
+	for(int i=0;i<numbs.size();i+=2) {
+		if (log(numbs[i])*numbs[i+1]>maxed) {
+			maxed=log(numbs[i])*numbs[i+1];
+			foundLine=lineNumber;
+			cout<<"base: "<<numbs[i]<<", exp: "<<numbs[i+1]<<endl;
+			cout<<foundLine<<endl;
+
 		}
+
+		lineNumber++;
 	}
-=======
-int main() {	
-	auto start_time = std::chrono::high_resolution_clock::now();
 
 
-	
+	cout<<foundLine<<endl;
 
 
->>>>>>> e579c5d971f151ffaae8eabc27f187c22cd76642
+
+
+
     
 	auto end_time = std::chrono::high_resolution_clock::now();
 	cout <<"\nElapsed: "<< std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count() << ".";

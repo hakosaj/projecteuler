@@ -135,7 +135,11 @@ vector<int> multiply(vector<int> digits, int n){
 int main() {
 	auto start_time = std::chrono::high_resolution_clock::now();
 
-	//
+	for (int i=10;i<20;i++) {
+		cout<<i<<endl;
+		auto digs = toDigits(i);
+		cout<<printVector(digs)<<endl;
+	}
 
 
 

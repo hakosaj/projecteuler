@@ -11,10 +11,7 @@
 #include <chrono>
 #include <cstring>
 #include <unordered_map>
-<<<<<<< HEAD
-#include <map>
 
-using std::map;
 using std::cout;
 using std::endl;
 using std::vector;
@@ -158,6 +155,7 @@ vector<int> powerWithTrim(vector<int> digits, int p, int lastDigits) {
 	vector<int> base = digits;
 	for (int i=1;i<p;i++) {
 		digits=trimToLastDigits(multiplyVectors(digits,base),lastDigits);
+		cout<<i<<endl;
 	}
 	return digits;
 }
@@ -167,10 +165,7 @@ vector<int> power(vector<int> digits, int p) {
 	for (int i=1;i<p;i++) {
 		digits=multiplyVectors(digits,base);
 		digits=scaleToBaseN(digits,10);
-<<<<<<< HEAD
-=======
-		printVector(digits);
->>>>>>> e579c5d971f151ffaae8eabc27f187c22cd76642
+		//printVector(digits);
 	}
 	return digits;
 }
@@ -179,40 +174,12 @@ long digitCount(vector<int> base) {
 	return std::accumulate(base.begin(),base.end(),0);
 }
 
-<<<<<<< HEAD
-long  toInt(vector<int> digits) {
-	long res=0;
-	int i=0;
-	for (const auto &a: digits) {
-		res+=(long)a*pow(10,i);
-		i++;
-	}
-
-	return res;
-}
-
 int main() {	
 	auto start_time = std::chrono::high_resolution_clock::now();
 
-	map<int, long long int> cubes;
+	vector<int> bas = toDigits(2);
+	bas = powerWithTrim(bas,7830457,10);
 
-	for (int i=100;i<102;i++) {
-		cubes.insert({i,i*i*i});
-		auto current = toDigits(i*i*i);
-		std::sort(current.begin(),current.end());
-		while (std::next_permutation(current.begin(),current.end())) {
-			cout<<toInt(current)<<endl;
-		}
-	}
-=======
-int main() {	
-	auto start_time = std::chrono::high_resolution_clock::now();
-
-
-	
-
-
->>>>>>> e579c5d971f151ffaae8eabc27f187c22cd76642
     
 	auto end_time = std::chrono::high_resolution_clock::now();
 	cout <<"\nElapsed: "<< std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count() << ".";
