@@ -6,6 +6,7 @@
 #include <omp.h>
 #include <fstream>
 #include <string>
+#include <unordered_set>
 #include <sstream>
 #include <iterator>
 #include <chrono>
@@ -173,27 +174,78 @@ long digitCount(vector<int> base) {
 	return std::accumulate(base.begin(),base.end(),0);
 }
 
+template <typename T>
+void print( T a)
+{
+   cout<<a<<endl;
+}
+
+template <typename N>
+N getReverseInt(N value) {
+    N resultNumber = 0;
+    for (N i = value; i != 0;) {
+        N d = i / 10;
+        resultNumber = (resultNumber - d) * 10 + i;
+        i = d;
+    }
+    return resultNumber;
+}
+
+		std::unordered_set<int> checks{85,89,145,42,20,4,16,37,58};
+
+bool squaredSums(long long number) {
+	long long sm=0;
+	if(checks.count(number)) {
+		return true;
+	}
+	if(number==1) {
+		return false;
+	}
+
+	for (int i=0;i<(int)std::floor(log(number))+1;i++) {
+		long long temp=0;
+
+		auto a1=number%(long)pow(10,i+1);
+		auto a2=number%(long)pow(10,i);
+
+		temp+=(long)pow(a1,2);
+		temp-=2*a2*a1;
+		temp+=(long)pow(a2,2);
+		sm+=(temp/(long)(pow(10,2*i)));
+	}
+	return squaredSums(sm);
+
+}
 int main() {	
 
-	vector<double> a;
-	vector<double> b;
-	vector<double> c;
-	long ln=70000000;
-
-	for (int i=0; i<ln;++i) {
-		a.push_back(double(i*1.5));
-		b.push_back(double(i*2.5));
-	}
 
 	auto start_time = std::chrono::high_resolution_clock::now();
+	int counter=0;
 
-	for (int i=0;i<ln;i+=2) {
-			//c[i]=sqrt(a[a.size()-1-i]*b[i]);
-			c.push_back(sqrt(b[i]));
-			c.push_back(sqrt(b[i+1]));
 
+		for(long i=1;i<568;i++) {
+			if (squaredSums(i)) {
+				checks.insert(i);
+				counter++;
+			}
+		}
+	#pragma omp parallel
+	{
+		int owncounter=0;
+		#pragma omp for
+		for(long i=568;i<10000000;i++) {
+			if (squaredSums(i)) {
+				owncounter++;
+			}
+		}
+	#pragma omp critical
+	{
+		counter+=owncounter;
 	}
 
+
+	}
+	print<int>(counter);
 	
     
 	auto end_time = std::chrono::high_resolution_clock::now();

@@ -174,28 +174,19 @@ long digitCount(vector<int> base) {
 }
 
 int main() {	
-
-	vector<double> a;
-	vector<double> b;
-	vector<double> c;
-	long ln=70000000;
-
-	for (int i=0; i<ln;++i) {
-		a.push_back(double(i*1.5));
-		b.push_back(double(i*2.5));
-	}
-
 	auto start_time = std::chrono::high_resolution_clock::now();
-
-	for (int i=0;i<ln;i+=2) {
-			//c[i]=sqrt(a[a.size()-1-i]*b[i]);
-			c.push_back(sqrt(b[i]));
-			c.push_back(sqrt(b[i+1]));
-
+	int counter=0;
+	for (int a=1;a<10;a++) {
+		for (int b=1;b<22;b++) {
+			if (b==std::floor(std::log(a^b)+1)) {
+				cout<<"Found one! "<<endl;
+				counter++;
+			}
+		}
 	}
+	cout<<counter<<endl;
 
-	
-    
+
 	auto end_time = std::chrono::high_resolution_clock::now();
 	cout <<"\nElapsed: "<< std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count() << ".";
 	cout << std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() << " seconds." <<endl;
