@@ -6,12 +6,13 @@
 #include <omp.h>
 #include <fstream>
 #include <string>
+#include <unordered_set>
 #include <sstream>
 #include <iterator>
 #include <chrono>
 #include <cstring>
 #include <unordered_map>
-
+#include <set>
 using std::cout;
 using std::endl;
 using std::vector;
@@ -78,9 +79,8 @@ vector<int> trimToLastDigits(vector<int> digits, int d) {
 void printVector(vector<int> digits) {
 
     std::reverse(digits.begin(),digits.end());
-    cout<<"\n";
     for (int i: digits  ) {
-        cout<<i;
+        cout<<i<<",";
     }
 
     cout<<"\n";
@@ -173,49 +173,154 @@ long digitCount(vector<int> base) {
 	return std::accumulate(base.begin(),base.end(),0);
 }
 
-
-vector<string> readfile(string filename)
+template <typename T>
+void print( T a)
 {
+   cout<<a<<endl;
+}
+
+
+vector<string> split(string s, string delimiter) {
+	size_t pos = 0;
+	vector<string> splitt;
+	std::string token;
+	while ((pos = s.find(delimiter)) != std::string::npos) {
+    token = s.substr(0, pos);
+	splitt.push_back(token);
+    s.erase(0, pos + delimiter.length());
+	}
+	splitt.insert(splitt.begin(),s);
+	return splitt;
+}
+
+vector<int> splitInts(string s, string delimiter) {
+	size_t pos = 0;
+	vector<int> splitt;
+	std::string token;
+	while ((pos = s.find(delimiter)) != std::string::npos) {
+    token = s.substr(0, pos);
+	splitt.push_back(std::stoi(token));
+    s.erase(0, pos + delimiter.length());
+	}
+	splitt.push_back(std::stoi(s));
+	return splitt;
+}
+
+
+string eraseChar(string myText, string del) {
+	myText.erase(remove_if(myText.begin(), myText.end(), isspace), myText.end());
+	return myText;
+}
+
+
+template <typename F>
+vector<F> readfile(string filename) {
   string myText;
-  vector<string> contents;
+  vector<F> contents;
 
   std::fstream fileToRead(filename, std::ios::in);
 
-  while (std::getline(fileToRead, myText))
-  {
-    contents.push_back(myText);
-  }
+  while (std::getline(fileToRead, myText)) {
+	  vector<int> line;
+	  //Remove spaces
+	  myText=eraseChar(myText,"ta");
+      //Replace all dashes with 0
+	  std::replace( myText.begin(), myText.end(), '-', '0');
+	  line=splitInts(myText,",");
+		contents.push_back(line);
+	}
 
   fileToRead.close();
   return contents;
 }
 
+struct Node {
+  int id;
+};
+struct Edge {
+  int weight;
+  int id;
+  Node v1;
+  Node v2;
+} ;
+
+struct Graph{
+	int totalVertices;
+	int totalEdges;
+	std::unordered_map<int,Edge> edges;
+	std::unordered_map<int,Node> vertices;
+	std::unordered_map<Node,vector<int>
+};
+inline bool operator<(const Edge& lhs, const Edge& rhs)
+{
+  return lhs.id < rhs.id;
+}
+inline bool operator<(const Node& lhs, const Node& rhs)
+{
+  return lhs.id < rhs.id;
+}
 
 
+int totalWeight(Graph g) {
+	int l=0;
+	for (const auto &a:g.edges) {
+		l+=a.second.weight;
+	}
+	return l;
+
+}
+int Prim(Graph G) {
+	Node start=G.vertices[0].second;
+	std::unordered_map<int,int> prim;
+
+	for (const auto b&:G.vertices) {
+		cout<<"Vertex: "<<b.second
+
+	}
+}
 
 int main() {	
 
-	vector<double> a;
-	vector<double> b;
-	vector<double> c;
-	long ln=70000000;
-
-	for (int i=0; i<ln;++i) {
-		a.push_back(double(i*1.5));
-		b.push_back(double(i*2.5));
-	}
 
 	auto start_time = std::chrono::high_resolution_clock::now();
-
-	for (int i=0;i<ln;i+=2) {
-			//c[i]=sqrt(a[a.size()-1-i]*b[i]);
-			c.push_back(sqrt(b[i]));
-			c.push_back(sqrt(b[i+1]));
-
+	int counter=0;
+	auto contents=readfile<vector<int>>("test.csv");
+	Graph G;
+	G.totalVertices=contents.size();
+	for (int i=0;i<G.totalVertices;i++) {
+		Node n;
+		n.id=i;
+		G.vertices.insert(std::pair<int,Node>(i,n));
 	}
 
-	
-    
+	int edges=0;
+	int a=1;
+	int edgeids=0;
+	for (int g=0;g<contents.size();g++) {
+		for (int v=0;v<a;v++) {
+
+		//If edge exists, we add it
+		if (contents[g][v]) {
+			edges++;
+			Edge a;
+			a.weight=contents[g][v];
+			a.id=edgeids;
+			edgeids++;
+			a.v1=G.vertices[g];
+			a.v2=G.vertices[v];
+			G.edges.insert(std::pair<int,Edge>(edgeids,a));
+		};
+		}
+		a++;
+	}
+	print(edges);
+	G.totalEdges=edges;
+
+	print(totalWeight(G));
+
+
+
+
 	auto end_time = std::chrono::high_resolution_clock::now();
 	cout <<"\nElapsed: "<< std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count() << ".";
 	cout << std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() << " seconds." <<endl;
